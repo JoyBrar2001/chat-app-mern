@@ -2,15 +2,18 @@ const express = require("express");
 const dotenv = require("dotenv");
 
 const authRoutes = require("./routes/auth.route");
+const connectToMongoDB = require("./db/connectToMongo");
+
+const app = express();
+const PORT = process.env.PORT || 5000;
 
 dotenv.config();
 
-const app = express();
-
-const PORT = process.env.PORT || 5000;
+app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 
 app.listen(PORT, () => {
-  console.log(`Server is listening on PORT ${PORT}`)
+  connectToMongoDB();
+  console.log(`Server is listening on PORT ${PORT}`);
 });
