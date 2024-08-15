@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 
 const authRoutes = require("./routes/auth.route");
 const messageRoutes = require("./routes/message.route");
+const userRoutes = require("./routes/user.route");
 const connectToMongoDB = require("./db/connectToMongo");
 
 const app = express();
@@ -16,6 +17,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/users", userRoutes);
 
 app.listen(PORT, () => {
   connectToMongoDB();
