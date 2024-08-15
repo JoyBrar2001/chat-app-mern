@@ -7,7 +7,7 @@ const signup = async (req, res) => {
   const { fullName, username, password, confirmPassword, gender } = req.body;
 
   try {
-    if (fullName || username || password || confirmPassword || gender) {
+    if (!fullName || !username || !password || !confirmPassword || !gender) {
       return res
         .status(400)
         .json({
@@ -84,6 +84,15 @@ const login = async (req, res) => {
   const { username, password } = req.body;
 
   try {
+    if (!username || !password) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          error: "All Fields are required (username, password)",
+        });
+    }
+
     const user = await User.findOne({ username });
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
@@ -92,13 +101,14 @@ const login = async (req, res) => {
         .status(400)
         .json({
           success: false,
-          error: "All Fields are required (fullName, username, password, confirmPassword, gender)",
+          error: "Invalid username or password",
         });
     }
 
     generateTokenAndSetCookie(user._id, res);
 
     return res.status(200).json({
+      success: true,
       _id: user._id,
       fullName: user.fullName,
       username: user.username,
@@ -109,7 +119,10 @@ const login = async (req, res) => {
 
     return res
       .status(500)
-      .json({ error: "Internal Server Error" });
+      .json({
+        success: false,
+        error: "Internal Server Error",
+      });
   }
 }
 
@@ -119,7 +132,10 @@ const logout = async (req, res) => {
 
     return res
       .status(200)
-      .json({ message: "Logged out successfully" });
+      .json({
+        success: true,
+        message: "Logged out successfully",
+      });
   } catch (error) {
     console.log("Error in logout controller", error.message);
 
